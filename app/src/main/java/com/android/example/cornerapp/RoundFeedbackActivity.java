@@ -1,9 +1,5 @@
 package com.android.example.cornerapp;
 
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,15 +15,15 @@ import java.util.List;
 
 public class RoundFeedbackActivity extends AppCompatActivity {
 
-    private LineChart lineChart;
-    private CustomLineDataSet dataSet;
+    private LineChart mLineChart;
+    private CustomLineDataSet mDataSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_round_feedback);
 
-        lineChart = (LineChart) findViewById(R.id.intensity_lineChart);
+        mLineChart = (LineChart) findViewById(R.id.intensity_lineChart);
 
         List<Entry> list = new ArrayList<>();
         list.add(new Entry(2, 5));
@@ -37,14 +33,22 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         list.add(new Entry(6, -5));
 
         Drawable backgroundGradient = ContextCompat.getDrawable(this, R.drawable.gradient_intensity);
-        dataSet = new CustomLineDataSet(list, "Intensity");
-        dataSet.setBackgroundGradient(backgroundGradient);
+        mDataSet = new CustomLineDataSet(list, "Intensity");
+        mDataSet.setBackgroundGradient(backgroundGradient);
+        mDataSet.setValuesFormatter(10, getResources().getColor(R.color.chartValueGreen), getResources().getColor(R.color.chartValueRed));
 
-        LineData lineData = new LineData(dataSet);
+        LineData lineData = new LineData(mDataSet);
 
-        lineChart.setData(lineData);
-        lineChart.setBackgroundColor(Color.parseColor("#ffffffff"));
-        lineChart.invalidate();
+        mLineChart.setData(lineData);
+        mLineChart.getAxisLeft().setEnabled(false);
+        mLineChart.getAxisRight().setEnabled(false);
+        mLineChart.getLegend().setEnabled(false);
+        mLineChart.getDescription().setEnabled(false);
+        mLineChart.getXAxis().setPosition(com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM);
+        mLineChart.getXAxis().setGranularity(1f);
+        mLineChart.getXAxis().setGridColor(getResources().getColor(R.color.chartVerticalAxis));
+        mLineChart.setBackgroundColor(getResources().getColor(R.color.bgColor));
+        mLineChart.invalidate();
     }
 
     @Override
@@ -54,9 +58,9 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         this.findViewById(android.R.id.content).post(new Runnable() {
             @Override
             public void run() {
-                if (dataSet != null)
-                    dataSet.setLineGradient(lineChart, Color.parseColor("#3cff00"),
-                            Color.parseColor("#ff0400"), 50);
+                if (mDataSet != null)
+                    mDataSet.setLineGradient(mLineChart, getResources().getColor(R.color.chartHighGreen),
+                            getResources().getColor(R.color.chartLowRed), 5);
             }
         });
     }

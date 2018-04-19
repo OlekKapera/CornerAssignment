@@ -5,10 +5,14 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
+import com.android.example.cornerapp.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +22,9 @@ public class CustomLineDataSet extends LineDataSet {
 
     public CustomLineDataSet(List<Entry> data, String label) {
         super(data, label);
+
+        //set default params
+//        setValuesFormatter();
     }
 
     /**
@@ -25,7 +32,7 @@ public class CustomLineDataSet extends LineDataSet {
      *
      * @param backgroundGradient gradient for chart's background
      */
-    public void setBackgroundGradient(Drawable backgroundGradient){
+    public void setBackgroundGradient(Drawable backgroundGradient) {
         setFillDrawable(backgroundGradient);
         setDrawFilled(true);
     }
@@ -33,12 +40,12 @@ public class CustomLineDataSet extends LineDataSet {
     /**
      * Set gradient lines and its width
      *
-     * @param mChart chart used for adding current data set
+     * @param mChart     chart used for adding current data set
      * @param lineColor1 first gradient color for line
      * @param lineColor2 second gradient color for line
-     * @param lineWidth width of the line
+     * @param lineWidth  width of the line
      */
-    public void setLineGradient(LineChart mChart, int lineColor1, int lineColor2, float lineWidth){
+    public void setLineGradient(LineChart mChart, int lineColor1, int lineColor2, float lineWidth) {
         Paint paint = mChart.getRenderer().getPaintRender();
         int height = mChart.getHeight();
 
@@ -46,5 +53,27 @@ public class CustomLineDataSet extends LineDataSet {
         paint.setShader(linGrad);
 
         setLineWidth(lineWidth);
+    }
+
+    public void setValuesFormatter(float textSize, final int topValueColor, final int lowValueColor) {
+        setDrawCircles(false);
+        setValueTextSize(textSize);
+
+        List<Integer> valueColors = new ArrayList<>();
+        valueColors.add(lowValueColor);
+        valueColors.add(topValueColor);
+        setValueTextColors(valueColors);
+
+        setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                if (getYMax() == value)
+                    return Float.toString(value);
+                else if (getYMin() == value)
+                    return Float.toString(value);
+                else
+                    return "";
+            }
+        });
     }
 }

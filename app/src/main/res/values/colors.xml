@@ -3,4 +3,12 @@
     <color name="colorPrimary">#000000</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="bgColor">#0F0F14</color>
+
+    <color name="chartLowRed">#D40100</color>
+    <color name="chartHighGreen">#06E600</color>
+    <color name="chartVerticalAxis">#161619</color>
+    <color name="chartValueRed">#C40000</color>
+    <color name="chartValueGreen">#07D701</color>
 </resources>
