@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomLineChart">
+        <attr name="isAxisLeft" format="boolean"/>
+        <attr name="isAxisRight" format="boolean"/>
+        <attr name="isLegend" format="boolean"/>
+        <attr name="isDescription" format="boolean"/>
+        <attr name="xGranularity" format="float"/>
+        <attr name="xGridColor" format="color"/>
+        <attr name="xTextColor" format="color"/>
+        <attr name="xGridWidth" format="float"/>
+        <attr name="isXAxisLine" format="boolean"/>
+        <attr name="xOffsetY" format="float"/>
+        <attr name="extraBottomOffset" format="float"/>
+        <attr name="backgroundColor" format="color"/>
+    </declare-styleable>
+</resources>

@@ -1,15 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="horizontal"
     tools:context=".RoundFeedbackActivity">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/intensity_lineChart"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay" >
 
+        <TextView
+            android:id="@+id/text_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Round 2"
+            android:textColor="@android:color/white"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:layout_gravity="center"
+            />
+    </android.support.v7.widget.Toolbar>
 
+    <RelativeLayout
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bgColor"
+        android:paddingBottom="16sp"
+        android:paddingTop="16dp">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/text_chartName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/intensityChartName"
+            android:textColor="@color/chartLabelColor"
+            android:textSize="15sp" />
+
+        <com.android.example.cornerapp.view.CustomLineChart
+            android:id="@+id/lineChart_intensity"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_below="@+id/text_chartName" />
+    </RelativeLayout>
+</RelativeLayout>

@@ -5,11 +5,11 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
-import com.android.example.cornerapp.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
@@ -20,11 +20,11 @@ import java.util.List;
  */
 public class CustomLineDataSet extends LineDataSet {
 
+    private static boolean topValue = false;
+    private static boolean lowValue = false;
+
     public CustomLineDataSet(List<Entry> data, String label) {
         super(data, label);
-
-        //set default params
-//        setValuesFormatter();
     }
 
     /**
@@ -43,20 +43,18 @@ public class CustomLineDataSet extends LineDataSet {
      * @param mChart     chart used for adding current data set
      * @param lineColor1 first gradient color for line
      * @param lineColor2 second gradient color for line
-     * @param lineWidth  width of the line
      */
-    public void setLineGradient(LineChart mChart, int lineColor1, int lineColor2, float lineWidth) {
+    public void setLineGradient(LineChart mChart, int lineColor1, int lineColor2) {
         Paint paint = mChart.getRenderer().getPaintRender();
         int height = mChart.getHeight();
 
         LinearGradient linGrad = new LinearGradient(0, 0, 0, height, lineColor1, lineColor2, Shader.TileMode.REPEAT);
         paint.setShader(linGrad);
-
-        setLineWidth(lineWidth);
     }
 
-    public void setValuesFormatter(float textSize, final int topValueColor, final int lowValueColor) {
+    public void setValuesFormatter(float textSize, int topValueColor, int lowValueColor) {
         setDrawCircles(false);
+        setIconsOffset(new MPPointF(0, 5));
         setValueTextSize(textSize);
 
         List<Integer> valueColors = new ArrayList<>();
@@ -67,13 +65,17 @@ public class CustomLineDataSet extends LineDataSet {
         setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                if (getYMax() == value)
-                    return Float.toString(value);
-                else if (getYMin() == value)
-                    return Float.toString(value);
-                else
+                if (getYMax() == value && !topValue) {
+                    topValue = true;
+                    return (int) value + "%";
+                } else if (getYMin() == value && !lowValue) {
+                    lowValue = true;
+                    return (int) value + "%";
+                } else
                     return "";
             }
         });
+
+
     }
 }

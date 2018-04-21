@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CornerApp</string>
+    <string name="intensityChartName">Intensity</string>
 </resources>
