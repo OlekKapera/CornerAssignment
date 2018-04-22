@@ -20,7 +20,6 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 public class CustomHorizontalBarChartRender extends HorizontalBarChartRenderer {
 
     private double mMaxValue;
-    private static final int BAR_OFFSET = 32;
     private RectF mBarShadowRectBuffer = new RectF();
 
     public CustomHorizontalBarChartRender(int maxValue, BarDataProvider chart, ChartAnimator animator, ViewPortHandler viewPortHandler) {
@@ -31,103 +30,112 @@ public class CustomHorizontalBarChartRender extends HorizontalBarChartRenderer {
 
     @Override
     protected void drawValue(Canvas c, String valueText, float x, float y, int color) {
-        super.drawValue(c, valueText, (float) (x+ mMaxValue), y, color);
+        //when control value (-1) is passed skip drawing
+        if(Integer.parseInt(valueText) != -1) {
+            if (mMaxValue < 0)
+                super.drawValue(c, valueText, (float) 20, y, color);
+            else
+                super.drawValue(c, valueText, (float) c.getWidth() - 50, y, color);
+        }
     }
 
     @Override
     protected void drawDataSet(Canvas c, IBarDataSet dataSet, int index) {
-        if(mMaxValue < 0) {
-
-            Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
-
-            mBarBorderPaint.setColor(dataSet.getBarBorderColor());
-            mBarBorderPaint.setStrokeWidth(Utils.convertDpToPixel(dataSet.getBarBorderWidth()));
-
-            final boolean drawBorder = dataSet.getBarBorderWidth() > 0.f;
-
-            float phaseX = mAnimator.getPhaseX();
-            float phaseY = mAnimator.getPhaseY();
-
-            // draw the bar shadow before the values
-            if (mChart.isDrawBarShadowEnabled()) {
-                mShadowPaint.setColor(dataSet.getBarShadowColor());
-
-                BarData barData = mChart.getBarData();
-
-                final float barWidth = barData.getBarWidth();
-                final float barWidthHalf = barWidth / 2.0f;
-                float x;
-
-                for (int i = 0, count = Math.min((int) (Math.ceil((float) (dataSet.getEntryCount()) * phaseX)), dataSet.getEntryCount());
-                     i < count;
-                     i++) {
-
-                    BarEntry e = dataSet.getEntryForIndex(i);
-
-                    x = e.getX();
-
-                    mBarShadowRectBuffer.top = x - barWidthHalf;
-                    mBarShadowRectBuffer.bottom = x + barWidthHalf;
-
-                    trans.rectValueToPixel(mBarShadowRectBuffer);
-
-                    if (!mViewPortHandler.isInBoundsTop(mBarShadowRectBuffer.bottom))
-                        continue;
-
-                    if (!mViewPortHandler.isInBoundsBottom(mBarShadowRectBuffer.top))
-                        break;
-
-                    mBarShadowRectBuffer.left = mViewPortHandler.contentLeft();
-                    mBarShadowRectBuffer.right = mViewPortHandler.contentRight();
-
-                    c.drawRect(mBarShadowRectBuffer, mShadowPaint);
-                }
-            }
-
-            // initialize the buffer
-            BarBuffer buffer = mBarBuffers[index];
-            buffer.setPhases(phaseX, phaseY);
-            buffer.setDataSet(index);
-            buffer.setInverted(mChart.isInverted(dataSet.getAxisDependency()));
-            buffer.setBarWidth(mChart.getBarData().getBarWidth());
-
-            buffer.feed(dataSet);
-
-            trans.pointValuesToPixel(buffer.buffer);
-
-            final boolean isSingleColor = dataSet.getColors().size() == 1;
-
-            if (isSingleColor) {
-                mRenderPaint.setColor(dataSet.getColor());
-            }
-
-            for (int j = 0; j < buffer.size(); j += 4) {
-
-                if (!mViewPortHandler.isInBoundsTop(buffer.buffer[j + 3]))
-                    break;
-
-                if (!mViewPortHandler.isInBoundsBottom(buffer.buffer[j + 1]))
-                    continue;
-
-                if (!isSingleColor) {
-                    // Set the color for the currently drawn value. If the index
-                    // is out of bounds, reuse colors.
-                    mRenderPaint.setColor(dataSet.getColor(j / 4));
-                }
-
-                c.drawRect(buffer.buffer[j] + BAR_OFFSET, buffer.buffer[j + 1], buffer.buffer[j + 2] + BAR_OFFSET,
-                        buffer.buffer[j + 3], mRenderPaint);
-
-                if (drawBorder) {
-                    c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
-                            buffer.buffer[j + 3], mBarBorderPaint);
-                }
-            }
-        } else
-            super.drawDataSet(c, dataSet, index);
+        if (mMaxValue < 0)
+            adjustBarPosition(24, c, dataSet, index);
+        else
+            adjustBarPosition(-10, c, dataSet, index);
     }
 
-    private void calcMaxOffset(){
-        mMaxValue = mMaxValue*7.5;
+    private void calcMaxOffset() {
+        mMaxValue = mMaxValue * 7.5;
+    }
+
+    private void adjustBarPosition(int barOffset, Canvas c, IBarDataSet dataSet, int index) {
+        Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
+
+        mBarBorderPaint.setColor(dataSet.getBarBorderColor());
+        mBarBorderPaint.setStrokeWidth(Utils.convertDpToPixel(dataSet.getBarBorderWidth()));
+
+        final boolean drawBorder = dataSet.getBarBorderWidth() > 0.f;
+
+        float phaseX = mAnimator.getPhaseX();
+        float phaseY = mAnimator.getPhaseY();
+
+        // draw the bar shadow before the values
+        if (mChart.isDrawBarShadowEnabled()) {
+            mShadowPaint.setColor(dataSet.getBarShadowColor());
+
+            BarData barData = mChart.getBarData();
+
+            final float barWidth = barData.getBarWidth();
+            final float barWidthHalf = barWidth / 2.0f;
+            float x;
+
+            for (int i = 0, count = Math.min((int) (Math.ceil((float) (dataSet.getEntryCount()) * phaseX)), dataSet.getEntryCount());
+                 i < count;
+                 i++) {
+
+                BarEntry e = dataSet.getEntryForIndex(i);
+
+                x = e.getX();
+
+                mBarShadowRectBuffer.top = x - barWidthHalf;
+                mBarShadowRectBuffer.bottom = x + barWidthHalf;
+
+                trans.rectValueToPixel(mBarShadowRectBuffer);
+
+                if (!mViewPortHandler.isInBoundsTop(mBarShadowRectBuffer.bottom))
+                    continue;
+
+                if (!mViewPortHandler.isInBoundsBottom(mBarShadowRectBuffer.top))
+                    break;
+
+                mBarShadowRectBuffer.left = mViewPortHandler.contentLeft();
+                mBarShadowRectBuffer.right = mViewPortHandler.contentRight();
+
+                c.drawRect(mBarShadowRectBuffer, mShadowPaint);
+            }
+        }
+
+        // initialize the buffer
+        BarBuffer buffer = mBarBuffers[index];
+        buffer.setPhases(phaseX, phaseY);
+        buffer.setDataSet(index);
+        buffer.setInverted(mChart.isInverted(dataSet.getAxisDependency()));
+        buffer.setBarWidth(mChart.getBarData().getBarWidth());
+
+        buffer.feed(dataSet);
+
+        trans.pointValuesToPixel(buffer.buffer);
+
+        final boolean isSingleColor = dataSet.getColors().size() == 1;
+
+        if (isSingleColor) {
+            mRenderPaint.setColor(dataSet.getColor());
+        }
+
+        for (int j = 0; j < buffer.size(); j += 4) {
+
+            if (!mViewPortHandler.isInBoundsTop(buffer.buffer[j + 3]))
+                break;
+
+            if (!mViewPortHandler.isInBoundsBottom(buffer.buffer[j + 1]))
+                continue;
+
+            if (!isSingleColor) {
+                // Set the color for the currently drawn value. If the index
+                // is out of bounds, reuse colors.
+                mRenderPaint.setColor(dataSet.getColor(j / 4));
+            }
+
+            c.drawRect(buffer.buffer[j] + barOffset, buffer.buffer[j + 1], buffer.buffer[j + 2] + barOffset,
+                    buffer.buffer[j + 3], mRenderPaint);
+
+            if (drawBorder) {
+                c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
+                        buffer.buffer[j + 3], mBarBorderPaint);
+            }
+        }
     }
 }

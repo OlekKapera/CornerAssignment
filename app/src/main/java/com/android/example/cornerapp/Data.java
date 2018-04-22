@@ -22,6 +22,7 @@ public class Data {
     private int mRightUppercut;
 
     private int mTopPunch;
+    private boolean mIsLeftBigger;
     private double mInterval;
 
     public Data() {
@@ -108,18 +109,30 @@ public class Data {
             }
         }
 
-        if (mLeftJab > mTopPunch)
+        if (mLeftJab > mTopPunch) {
             mTopPunch = mLeftJab;
-        if (mLeftHook > mTopPunch)
+            mIsLeftBigger = true;
+        }
+        if (mLeftHook > mTopPunch) {
             mTopPunch = mLeftHook;
-        if (mLeftUppercut > mTopPunch)
+            mIsLeftBigger = true;
+        }
+        if (mLeftUppercut > mTopPunch) {
             mTopPunch = mLeftUppercut;
-        if (mRightCross > mTopPunch)
+            mIsLeftBigger = true;
+        }
+        if (mRightCross > mTopPunch) {
             mTopPunch = mRightCross;
-        if (mRightHook > mTopPunch)
+            mIsLeftBigger = false;
+        }
+        if (mRightHook > mTopPunch) {
             mTopPunch = mRightHook;
-        if (mRightUppercut > mTopPunch)
+            mIsLeftBigger = false;
+        }
+        if (mRightUppercut > mTopPunch) {
             mTopPunch = mRightUppercut;
+            mIsLeftBigger = false;
+        }
     }
 
     public void addPunch(Punch punch) {
@@ -216,6 +229,14 @@ public class Data {
 
     public void setmTopPunch(int mTopPunch) {
         this.mTopPunch = mTopPunch;
+    }
+
+    public boolean ismIsLeftBigger() {
+        return mIsLeftBigger;
+    }
+
+    public void setmIsLeftBigger(boolean mIsLeftBigger) {
+        this.mIsLeftBigger = mIsLeftBigger;
     }
 
     public double getmInterval() {

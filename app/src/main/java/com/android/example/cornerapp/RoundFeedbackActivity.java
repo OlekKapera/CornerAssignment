@@ -5,7 +5,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.View;
+import android.view.WindowInsets;
 import android.widget.TextView;
 
 import com.android.example.cornerapp.util.CSVFile;
@@ -16,11 +18,15 @@ import com.android.example.cornerapp.view.CustomLineChart;
 import com.android.example.cornerapp.view.CustomLineDataSet;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.listener.OnDrawListener;
 
 import java.io.InputStream;
 import java.text.ParseException;
@@ -164,10 +170,12 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         mLineChart.setData(lineData);
         mLineChart.setBackgroundColor(getResources().getColor(R.color.bgColor));
 
+        mLineDataSet.setValuesFormatter(13, getResources().getColor(R.color.chartValueGreen), getResources().getColor(R.color.chartValueRed));
+
         // format values when focus was changed
-        mLineChart.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mLineChart.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
+            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
                 mLineDataSet.setValuesFormatter(13, getResources().getColor(R.color.chartValueGreen), getResources().getColor(R.color.chartValueRed));
             }
         });
@@ -198,8 +206,9 @@ public class RoundFeedbackActivity extends AppCompatActivity {
 
         //adjust data for right chart
         List<BarEntry> dataRight = new ArrayList<>();
+        dataRight.add(new BarEntry(0, -1));
         dataRight.add(new BarEntry(0, mData.getmRightUppercut()));
-        dataRight.add(new BarEntry(1, 0));
+        dataRight.add(new BarEntry(1, mData.getmRightHook()));
         dataRight.add(new BarEntry(2, mData.getmRightCross()));
 
         mBarDataSetLeft = new CustomHorizontalBarDataSet(dataLeft, "Type Left", getResources().getColor(R.color.chartValueGreen), 15);
@@ -212,15 +221,20 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         mRightHandChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
 
         BarData barDataLeft = new BarData(mBarDataSetLeft);
-        barDataLeft.setBarWidth(.05f);
+        barDataLeft.setBarWidth(.1f);
 
         BarData barDataRight = new BarData(mBarDataSetRight);
-        barDataRight.setBarWidth(.05f);
+        barDataRight.setBarWidth(.1f);
 
         mLeftHandChart.setData(barDataLeft);
-        mLeftHandChart.invalidate();
-
         mRightHandChart.setData(barDataRight);
+
+        if(mData.ismIsLeftBigger())
+            mRightHandChart.setVisibleYRangeMinimum(mData.getmTopPunch(), YAxis.AxisDependency.LEFT);
+        else
+            mLeftHandChart.setVisibleYRangeMinimum(mData.getmTopPunch(), YAxis.AxisDependency.RIGHT);
+
+        mLeftHandChart.invalidate();
         mRightHandChart.invalidate();
     }
 }

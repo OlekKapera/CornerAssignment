@@ -44,37 +44,34 @@ public class CustomHorizontalBarChart extends HorizontalBarChart {
     private void init(AttributeSet attrs) {
         TypedArray a = getResources().obtainAttributes(attrs, R.styleable.CustomHorizontalBarChart);
 
-        if (a != null) {
+        Boolean isAxisLeftInverted = a.getBoolean(R.styleable.CustomHorizontalBarChart_isAxisLeftInverted, DEFAULT_INVERSION);
+        Boolean isGridLines = a.getBoolean(R.styleable.CustomHorizontalBarChart_isGridLines, DEFAULT_BOOLEAN);
+        Boolean isAxisLeft = a.getBoolean(R.styleable.CustomHorizontalBarChart_isAxisLeft, DEFAULT_BOOLEAN);
+        Boolean isAxisRight = a.getBoolean(R.styleable.CustomHorizontalBarChart_isAxisRight, DEFAULT_BOOLEAN);
+        Boolean isLegend = a.getBoolean(R.styleable.CustomHorizontalBarChart_isLegend, DEFAULT_BOOLEAN);
+        Boolean isDescription = a.getBoolean(R.styleable.CustomHorizontalBarChart_isDescription, DEFAULT_BOOLEAN);
 
-            Boolean isAxisLeftInverted = a.getBoolean(R.styleable.CustomHorizontalBarChart_isAxisLeftInverted, DEFAULT_INVERSION);
-            Boolean isGridLines = a.getBoolean(R.styleable.CustomHorizontalBarChart_isGridLines, DEFAULT_BOOLEAN);
-            Boolean isAxisLeft = a.getBoolean(R.styleable.CustomHorizontalBarChart_isAxisLeft, DEFAULT_BOOLEAN);
-            Boolean isAxisRight = a.getBoolean(R.styleable.CustomHorizontalBarChart_isAxisRight, DEFAULT_BOOLEAN);
-            Boolean isLegend = a.getBoolean(R.styleable.CustomHorizontalBarChart_isLegend, DEFAULT_BOOLEAN);
-            Boolean isDescription = a.getBoolean(R.styleable.CustomHorizontalBarChart_isDescription, DEFAULT_BOOLEAN);
+        int xTextColor = a.getColor(R.styleable.CustomHorizontalBarChart_xTextColor, DEFAULT_COLOR);
+        int xAxisColor = a.getColor(R.styleable.CustomHorizontalBarChart_xLineColor, DEFAULT_AXISCOLOR);
+        int xTextSize = a.getInt(R.styleable.CustomHorizontalBarChart_xTextSize, DEFAULT_TEXTSIZE);
+        float xLineWidth = a.getFloat(R.styleable.CustomHorizontalBarChart_xLineWidth, DEFAULT_AXISWIDTH);
+        int labelCount = a.getInt(R.styleable.CustomHorizontalBarChart_labelCount, DEFAULT_LABELCOUNT);
 
-            int xTextColor = a.getColor(R.styleable.CustomHorizontalBarChart_xTextColor, DEFAULT_COLOR);
-            int xAxisColor = a.getColor(R.styleable.CustomHorizontalBarChart_xLineColor, DEFAULT_AXISCOLOR);
-            int xTextSize = a.getInt(R.styleable.CustomHorizontalBarChart_xTextSize, DEFAULT_TEXTSIZE);
-            float xLineWidth = a.getFloat(R.styleable.CustomHorizontalBarChart_xLineWidth, DEFAULT_AXISWIDTH);
-            int labelCount = a.getInt(R.styleable.CustomHorizontalBarChart_labelCount, DEFAULT_LABELCOUNT);
+        getAxisLeft().setInverted(isAxisLeftInverted);
+        getAxisLeft().setEnabled(isAxisLeft);
+        getAxisRight().setEnabled(isAxisRight);
+        getLegend().setEnabled(isLegend);
+        getDescription().setEnabled(isDescription);
+        getXAxis().setDrawGridLines(isGridLines);
+        getXAxis().setTextColor(xTextColor);
+        getXAxis().setAxisLineColor(xAxisColor);
+        getXAxis().setTextSize(xTextSize);
+        getXAxis().setAxisLineWidth(xLineWidth);
+        getXAxis().setLabelCount(labelCount);
+        setTouchEnabled(false);
 
-            getAxisLeft().setInverted(isAxisLeftInverted);
-            getAxisLeft().setEnabled(isAxisLeft);
-            getAxisRight().setEnabled(isAxisRight);
-            getLegend().setEnabled(isLegend);
-            getDescription().setEnabled(isDescription);
-            getXAxis().setDrawGridLines(isGridLines);
-            getXAxis().setTextColor(xTextColor);
-            getXAxis().setAxisLineColor(xAxisColor);
-            getXAxis().setTextSize(xTextSize);
-            getXAxis().setAxisLineWidth(xLineWidth);
-            getXAxis().setLabelCount(labelCount);
-            setTouchEnabled(false);
+        getXAxis().setValueFormatter(new IndexAxisValueFormatter(DEFAULT_LABELS));
 
-            getXAxis().setValueFormatter(new IndexAxisValueFormatter(DEFAULT_LABELS));
-
-            a.recycle();
-        }
+        a.recycle();
     }
 }

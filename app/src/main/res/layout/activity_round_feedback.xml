@@ -172,6 +172,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/text_barChartName"
                     android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:weightSum="2">
 
                     <com.android.example.cornerapp.view.CustomHorizontalBarChart
