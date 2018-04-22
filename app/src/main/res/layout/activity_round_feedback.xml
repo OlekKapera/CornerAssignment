@@ -8,45 +8,185 @@
     android:orientation="horizontal"
     tools:context=".RoundFeedbackActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        app:popupTheme="@style/AppTheme.PopupOverlay" >
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text_toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Round 2"
-            android:textColor="@android:color/white"
-            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:layout_gravity="center"
-            />
-    </android.support.v7.widget.Toolbar>
-
-    <RelativeLayout
-        android:layout_below="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bgColor"
-        android:paddingBottom="16sp"
-        android:paddingTop="16dp">
-
-        <TextView
-            android:id="@+id/text_chartName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/intensityChartName"
-            android:textColor="@color/chartLabelColor"
-            android:textSize="15sp" />
-
-        <com.android.example.cornerapp.view.CustomLineChart
-            android:id="@+id/lineChart_intensity"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_below="@+id/text_chartName" />
-    </RelativeLayout>
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <TextView
+                    android:id="@+id/text_toolbar_title"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Round 2"
+                    android:textColor="@android:color/white" />
+            </android.support.v7.widget.Toolbar>
+
+            <RelativeLayout
+                android:id="@+id/container_intensity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/toolbar"
+                android:background="@color/bgColor"
+                android:paddingBottom="16sp"
+                android:paddingTop="16dp">
+
+                <TextView
+                    android:id="@+id/text_chartName"
+                    style="@style/greyTextStyle"
+                    android:text="@string/intensityChartName" />
+
+                <com.android.example.cornerapp.view.CustomLineChart
+                    android:id="@+id/lineChart_intensity"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_below="@+id/text_chartName" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/container_trainingInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/container_intensity"
+                android:layout_marginBottom="@dimen/trainingInfoMargin"
+                android:layout_marginTop="@dimen/trainingInfoMargin"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <RelativeLayout style="@style/trainingInfo">
+
+                    <TextView
+                        android:id="@+id/text_punches"
+                        style="@style/greyTextStyle"
+                        android:text="@string/punches" />
+
+                    <TextView
+                        android:id="@+id/text_punchesCount"
+                        style="@style/trainingInfoValue"
+                        android:layout_below="@id/text_punches"
+                        android:text="56" />
+
+                    <TextView
+                        style="@style/greyTextStyle"
+                        android:layout_below="@id/text_punchesCount" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    style="@style/trainingInfo"
+                    android:layout_marginLeft="@dimen/trainingInfoMargin"
+                    android:layout_marginRight="@dimen/trainingInfoMargin">
+
+                    <TextView
+                        android:id="@+id/text_speed"
+                        style="@style/greyTextStyle"
+                        android:text="@string/speed_avg" />
+
+                    <LinearLayout
+                        android:id="@+id/container_speedValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/text_speed"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:id="@+id/text_speedValue"
+                            style="@style/trainingInfoValue.withIcon"
+                            android:text="16.4" />
+
+                        <ImageView
+                            style="@style/trainingInfoIcon"
+                            android:src="@drawable/ic_up_arrow" />
+                    </LinearLayout>
+
+
+                    <TextView
+                        style="@style/greyTextStyle"
+                        android:layout_below="@id/container_speedValue"
+                        android:text="@string/mph" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout style="@style/trainingInfo">
+
+                    <TextView
+                        android:id="@+id/text_power"
+                        style="@style/greyTextStyle"
+                        android:text="@string/power_avg" />
+
+                    <LinearLayout
+                        android:id="@+id/container_powerValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/text_power"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:id="@+id/text_powerValue"
+                            style="@style/trainingInfoValue.withIcon"
+                            android:text="12.5" />
+
+                        <ImageView
+                            style="@style/trainingInfoIcon"
+                            android:src="@drawable/ic_still_line" />
+                    </LinearLayout>
+
+
+                    <TextView
+                        style="@style/greyTextStyle"
+                        android:layout_below="@id/container_powerValue"
+                        android:text="@string/g" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/container_punchInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/container_trainingInfo"
+                android:background="@color/bgColor"
+                android:paddingTop="16dp">
+
+                <TextView
+                    android:id="@+id/text_barChartName"
+                    style="@style/greyTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/type_breakdown" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_barChartName"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                        android:id="@+id/barChart_leftHand"
+                        android:layout_width="0dp"
+                        android:layout_height="200dp"
+                        android:layout_weight="1" />
+
+                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                        android:id="@+id/barChart_rightHand"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

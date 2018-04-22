@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">CornerApp</string>
     <string name="intensityChartName">Intensity</string>
+    <string name="punches">Punches</string>
+    <string name="speed_avg">Speed (avg)</string>
+    <string name="mph">MPH</string>
+    <string name="power_avg">Power (avg)</string>
+    <string name="g">G</string>
+    <string name="type_breakdown">Type Breakdown</string>
 </resources>
