@@ -5,16 +5,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.example.cornerapp.util.CSVFile;
+import com.android.example.cornerapp.view.CustomHorizontalBarDataSet;
+import com.android.example.cornerapp.view.CustomHorizontalBarChart;
 import com.android.example.cornerapp.view.CustomHorizontalBarChartRender;
 import com.android.example.cornerapp.view.CustomLineChart;
 import com.android.example.cornerapp.view.CustomLineDataSet;
-import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -32,18 +34,22 @@ public class RoundFeedbackActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private LineChart mLineChart;
-    private CustomLineDataSet mDataSet;
+    private CustomLineDataSet mLineDataSet;
+    private CustomHorizontalBarDataSet mBarDataSetLeft;
+    private CustomHorizontalBarDataSet mBarDataSetRight;
 
     private TextView mPunches;
     private TextView mSpeed;
     private TextView mPower;
 
-    private HorizontalBarChart mLeftHandChart;
+    private CustomHorizontalBarChart mLeftHandChart;
+    private CustomHorizontalBarChart mRightHandChart;
 
     private Data mData;
     private List<Entry> mIntensityContent;
-    private int mPunchTarget = 100;
-    private int mPunchSeconds = 180;
+    private final int mPunchTarget = 100;
+    private final int mPunchSeconds = 180;
+    private final double mSessionLenght = 15.0;
 
     private SimpleDateFormat formatter;
 
@@ -52,6 +58,7 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_round_feedback);
 
+        //set toolbar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
@@ -66,27 +73,29 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         mPunches = (TextView) findViewById(R.id.text_punchesCount);
         mSpeed = (TextView) findViewById(R.id.text_speedValue);
         mPower = (TextView) findViewById(R.id.text_powerValue);
-        mLeftHandChart = (HorizontalBarChart) findViewById(R.id.barChart_leftHand);
+        mLeftHandChart = (CustomHorizontalBarChart) findViewById(R.id.barChart_leftHand);
+        mRightHandChart = (CustomHorizontalBarChart) findViewById(R.id.barChart_rightHand);
 
         //parse CSV file into data object
         InputStream inputStream = getResources().openRawResource(R.raw.round2);
         mData = parseData(inputStream);
-        mData.init(mPunchTarget, mPunchSeconds);
+        mData.init(mPunchTarget, mPunchSeconds, mSessionLenght);
 
         setupIntensityChart();
         setupTrainingInfo();
-        setupLeftHandChart();
+        setupHandChart();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
+        // set gradient after line chart has been initialized
         this.findViewById(R.id.lineChart_intensity).post(new Runnable() {
             @Override
             public void run() {
-                if (mDataSet != null)
-                    mDataSet.setLineGradient(mLineChart, getResources().getColor(R.color.chartHighGreen),
+                if (mLineDataSet != null)
+                    mLineDataSet.setLineGradient(mLineChart, getResources().getColor(R.color.chartHighGreen),
                             getResources().getColor(R.color.chartLowRed));
                 mLineChart.invalidate();
             }
@@ -104,6 +113,7 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         CSVFile csvFile = new CSVFile(inputStream);
         List<String[]> csvParsed = csvFile.read();
 
+        // time format for parsing time information
         formatter = new SimpleDateFormat("HH:mm:ss.SSS");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -113,8 +123,10 @@ public class RoundFeedbackActivity extends AppCompatActivity {
                 continue;
 
             try {
+                // get timestamp string value
                 Date date = formatter.parse(csvParsed.get(i)[0]);
                 long d = date.getTime();
+
                 data.addPunch(new Punch(date.getTime(), Integer.parseInt(csvParsed.get(i)[1]),
                         Double.parseDouble(csvParsed.get(i)[2]), Double.parseDouble(csvParsed.get(i)[3])));
             } catch (ParseException e) {
@@ -124,10 +136,13 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         return data;
     }
 
+    /**
+     * @return list of entries for intensity line chart with specific intervals
+     */
     private List<Entry> parseIntensityContent() {
         List<Entry> values = new ArrayList<>();
-        for (int i = 0; i < mData.getPunchesPercent().size(); i++) {
-            values.add(new Entry(15 * (i + 1), mData.getPunchesPercent().get(i)));
+        for (int i = 0; i < mData.getmPunchesPercent().size(); i++) {
+            values.add(new Entry(15 * (i + 1), mData.getmPunchesPercent().get(i)));
         }
         return values;
     }
@@ -140,15 +155,22 @@ public class RoundFeedbackActivity extends AppCompatActivity {
         mIntensityContent = parseIntensityContent();
 
         Drawable backgroundGradient = ContextCompat.getDrawable(this, R.drawable.gradient_intensity);
-        mDataSet = new CustomLineDataSet(mIntensityContent, "Intensity");
-        mDataSet.setBackgroundGradient(backgroundGradient);
-        mDataSet.setValuesFormatter(13, getResources().getColor(R.color.chartValueGreen), getResources().getColor(R.color.chartValueRed));
-        mDataSet.setLineWidth(5f);
+        mLineDataSet = new CustomLineDataSet(mIntensityContent, "Intensity");
+        mLineDataSet.setBackgroundGradient(backgroundGradient);
+        mLineDataSet.setLineWidth(5f);
 
-        LineData lineData = new LineData(mDataSet);
+        LineData lineData = new LineData(mLineDataSet);
 
         mLineChart.setData(lineData);
         mLineChart.setBackgroundColor(getResources().getColor(R.color.bgColor));
+
+        // format values when focus was changed
+        mLineChart.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                mLineDataSet.setValuesFormatter(13, getResources().getColor(R.color.chartValueGreen), getResources().getColor(R.color.chartValueRed));
+            }
+        });
 
         mLineChart.invalidate();
     }
@@ -156,48 +178,49 @@ public class RoundFeedbackActivity extends AppCompatActivity {
     /**
      * Fill textViews with specific data
      */
-    private void setupTrainingInfo(){
-        int punchesSum = mData.getPunches().size();
+    private void setupTrainingInfo() {
+        int punchesSum = mData.getmPunches().size();
 
         mPunches.setText(String.valueOf(punchesSum));
-        mSpeed.setText(String.format("%.2f",mData.getAvgSpeed()));
-        mPower.setText(String.format("%.2f",mData.getAvgPower()));
+        mSpeed.setText(String.format("%.2f", mData.getmAvgSpeed()));
+        mPower.setText(String.format("%.2f", mData.getmAvgPower()));
     }
 
     /**
      * Fill chart with data and adjust its appearance
      */
-    private void setupLeftHandChart() {
-        //adjust data for chart
-        List<BarEntry> data = new ArrayList<>();
-        data.add(new BarEntry(0, mData.getLeftJab()));
-        data.add(new BarEntry(1, mData.getLeftHook()));
-        data.add(new BarEntry(2, mData.getLeftUppercut()));
+    private void setupHandChart() {
+        //adjust data for left chart
+        List<BarEntry> dataLeft = new ArrayList<>();
+        dataLeft.add(new BarEntry(0, mData.getmLeftUppercut()));
+        dataLeft.add(new BarEntry(1, mData.getmLeftHook()));
+        dataLeft.add(new BarEntry(2, mData.getmLeftJab()));
 
-        String[] yLabels = {"U","H","J"};
+        //adjust data for right chart
+        List<BarEntry> dataRight = new ArrayList<>();
+        dataRight.add(new BarEntry(0, mData.getmRightUppercut()));
+        dataRight.add(new BarEntry(1, 0));
+        dataRight.add(new BarEntry(2, mData.getmRightCross()));
 
-        BarDataSet dataSet = new BarDataSet(data, "Type Left");
-        dataSet.setColor(getResources().getColor(R.color.chartValueGreen));
-        dataSet.setValueTextColor(getResources().getColor(R.color.chartValueGreen));
+        mBarDataSetLeft = new CustomHorizontalBarDataSet(dataLeft, "Type Left", getResources().getColor(R.color.chartValueGreen), 15);
+        mBarDataSetRight = new CustomHorizontalBarDataSet(dataRight, "Type Right", getResources().getColor(R.color.chartValueBlue), 15);
 
-        mLeftHandChart.getAxisLeft().setInverted(true);
-        mLeftHandChart.getAxisLeft().setEnabled(false);
-        mLeftHandChart.getAxisRight().setEnabled(false);
-        mLeftHandChart.getXAxis().setDrawGridLines(false);
-        mLeftHandChart.getXAxis().setTextColor(getResources().getColor(R.color.chartLabelColor));
-        mLeftHandChart.getXAxis().setTextSize(15);
-        mLeftHandChart.getXAxis().setAxisLineColor(getResources().getColor(android.R.color.white));
-        mLeftHandChart.getXAxis().setAxisLineWidth(1);
-        mLeftHandChart.getXAxis().setLabelCount(3);
-        mLeftHandChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(yLabels));
-        mLeftHandChart.setRenderer(new CustomHorizontalBarChartRender(200,mLeftHandChart, mLeftHandChart.getAnimator(), mLeftHandChart.getViewPortHandler()));
+        // move values a bars themselves into correct position
+        mLeftHandChart.setRenderer(new CustomHorizontalBarChartRender(mData.getmTopPunch() * -1, mLeftHandChart, mLeftHandChart.getAnimator(), mLeftHandChart.getViewPortHandler()));
+        mRightHandChart.setRenderer(new CustomHorizontalBarChartRender(mData.getmTopPunch(), mRightHandChart, mRightHandChart.getAnimator(), mRightHandChart.getViewPortHandler()));
+        mRightHandChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(new String[]{"U", "H", "C"}));
+        mRightHandChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
 
-        mLeftHandChart.getDescription().setEnabled(false);
-        mLeftHandChart.getLegend().setEnabled(false);
+        BarData barDataLeft = new BarData(mBarDataSetLeft);
+        barDataLeft.setBarWidth(.05f);
 
-        BarData barData = new BarData(dataSet);
+        BarData barDataRight = new BarData(mBarDataSetRight);
+        barDataRight.setBarWidth(.05f);
 
-        mLeftHandChart.setData(barData);
+        mLeftHandChart.setData(barDataLeft);
         mLeftHandChart.invalidate();
+
+        mRightHandChart.setData(barDataRight);
+        mRightHandChart.invalidate();
     }
 }

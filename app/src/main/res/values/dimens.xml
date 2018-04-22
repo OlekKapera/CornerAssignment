@@ -3,4 +3,5 @@
     <dimen name="chartYOffset">30px</dimen>
 
     <dimen name="trainingInfoMargin">4dp</dimen>
+    <dimen name="smallTextSize">15sp</dimen>
 </resources>

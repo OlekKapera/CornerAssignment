@@ -11,6 +11,7 @@
     <color name="chartVerticalAxis">#212121</color>
     <color name="chartValueRed">#C40000</color>
     <color name="chartValueGreen">#07D701</color>
+    <color name="chartValueBlue">#1A98E5</color>
     <color name="chartLabelColor">#757575</color>
 
 </resources>

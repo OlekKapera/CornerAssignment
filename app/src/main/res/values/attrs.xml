@@ -14,4 +14,18 @@
         <attr name="extraBottomOffset" format="float"/>
         <attr name="backgroundColor" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="CustomHorizontalBarChart">
+        <attr name="isAxisLeftInverted" format="boolean"/>
+        <attr name="isGridLines" format="boolean"/>
+        <attr name="isAxisLeft"/>
+        <attr name="isAxisRight"/>
+        <attr name="isLegend"/>
+        <attr name="isDescription"/>
+        <attr name="xTextColor"/>
+        <attr name="xLineColor" format="color"/>
+        <attr name="xTextSize" format="integer"/>
+        <attr name="xLineWidth" format="float"/>
+        <attr name="labelCount" format="integer"/>
+    </declare-styleable>
 </resources>

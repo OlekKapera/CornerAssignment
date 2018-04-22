@@ -52,7 +52,16 @@ public class CustomLineDataSet extends LineDataSet {
         paint.setShader(linGrad);
     }
 
+    /**
+     * Format values labels
+     * @param textSize size of label
+     * @param topValueColor color of the biggest label value
+     * @param lowValueColor color of the lowest label value
+     */
     public void setValuesFormatter(float textSize, int topValueColor, int lowValueColor) {
+        topValue = false;
+        lowValue = false;
+
         setDrawCircles(false);
         setIconsOffset(new MPPointF(0, 5));
         setValueTextSize(textSize);
@@ -62,6 +71,7 @@ public class CustomLineDataSet extends LineDataSet {
         valueColors.add(topValueColor);
         setValueTextColors(valueColors);
 
+        // adjust labels to view only the highest a the lowest value with percent sign at the end
         setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -75,7 +85,5 @@ public class CustomLineDataSet extends LineDataSet {
                     return "";
             }
         });
-
-
     }
 }

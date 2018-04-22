@@ -69,7 +69,7 @@
                     <TextView
                         android:id="@+id/text_punches"
                         style="@style/greyTextStyle"
-                        android:text="@string/punches" />
+                        android:text="@string/mPunches" />
 
                     <TextView
                         android:id="@+id/text_punchesCount"
@@ -174,17 +174,18 @@
                     android:orientation="horizontal"
                     android:weightSum="2">
 
-                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                    <com.android.example.cornerapp.view.CustomHorizontalBarChart
                         android:id="@+id/barChart_leftHand"
                         android:layout_width="0dp"
-                        android:layout_height="200dp"
+                        android:layout_height="150dp"
                         android:layout_weight="1" />
 
-                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                    <com.android.example.cornerapp.view.CustomHorizontalBarChart
                         android:id="@+id/barChart_rightHand"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_height="150dp"
+                        android:layout_weight="1"
+                        app:isAxisLeftInverted="false" />
                 </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>

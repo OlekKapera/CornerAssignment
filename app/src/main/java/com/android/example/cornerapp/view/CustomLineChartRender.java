@@ -23,6 +23,9 @@ public class CustomLineChartRender extends LineChartRenderer {
         this.yOffset = yOffset;
     }
 
+    /**
+     * Draw value with specific yOffset. If value is negative we have to consider also label's height
+     */
     @Override
     public void drawValue(Canvas c, IValueFormatter formatter, float value, Entry entry, int dataSetIndex, float x, float y, int color) {
         if (value < 0)

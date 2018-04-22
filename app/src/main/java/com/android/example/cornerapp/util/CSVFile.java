@@ -17,6 +17,10 @@ public class CSVFile {
         this.inputStream = inputStream;
     }
 
+    /**
+     * Read CSV File and parse its rows into list of strings
+     * @return parsed list of strings from csv file
+     */
     public List read(){
         List resultList = new ArrayList();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));

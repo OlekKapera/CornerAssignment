@@ -8,51 +8,56 @@ import java.util.List;
  */
 public class Data {
 
-    private List<Punch> punches = new ArrayList<>();
-    private List<Integer> punchesPercent = new ArrayList<>();
+    private List<Punch> mPunches = new ArrayList<>();
+    private List<Integer> mPunchesPercent = new ArrayList<>();
 
-    private double avgSpeed = 0;
-    private double avgPower = 0;
+    private double mAvgSpeed = 0;
+    private double mAvgPower = 0;
 
-    private int leftJab;
-    private int leftHook;
-    private int leftUppercut;
-    private int rightCross;
-    private int rightHook;
-    private int rightUppercut;
+    private int mLeftJab;
+    private int mLeftHook;
+    private int mLeftUppercut;
+    private int mRightCross;
+    private int mRightHook;
+    private int mRightUppercut;
+
+    private int mTopPunch;
+    private double mInterval;
 
     public Data() {
     }
 
     public Data(List<Punch> punches) {
-        this.punches = punches;
+        this.mPunches = punches;
     }
 
     /**
      * Initialize all class params accordingly to gained data
      */
-    public void init(double target, double seconds) {
-        calcPunchesPercents(target, seconds);
+    public void init(double target, double seconds, double interval) {
+        this.mInterval = interval;
+
+        calcPunchesPercents(target, seconds, interval);
         calcPunches();
         calcAvg();
     }
 
     /**
-     * Calculate how many punches in percents have been made considering targeted amount
+     * Calculate how many mPunches in percents have been made considering targeted amount
      *
-     * @param target  target punches per session
+     * @param target  target mPunches per session
      * @param seconds session length
      */
-    private void calcPunchesPercents(double target, double seconds) {
-        double punchPerSet = (target / seconds) * 15.0;
+    private void calcPunchesPercents(double target, double seconds, double interval) {
+        double punchPerSet = (target / seconds) * interval;
         int punchCount = 0;
-        int interval = 1;
+        int intervalsCount = 1;
 
-        for (int i = 0; i < punches.size(); i++) {
-            if (punches.get(i).getTimestamp() > (15000 * interval)) {
-                punchesPercent.add((int) Math.round((punchCount / punchPerSet * 100) - 100));
+        for (int i = 0; i < mPunches.size(); i++) {
+            if (mPunches.get(i).getTimestamp() > (interval * 1000 * intervalsCount)) {
+                mPunchesPercent.add((int) Math.round((punchCount / punchPerSet * 100) - 100));
                 punchCount = 0;
-                interval++;
+                intervalsCount++;
             }
             punchCount++;
         }
@@ -64,131 +69,160 @@ public class Data {
     public void calcAvg() {
         double speed = 0;
         double power = 0;
-        for (Punch p : punches) {
+        for (Punch p : mPunches) {
             speed += p.getSpeed();
             power += p.getPower();
         }
 
-        speed /= punches.size();
-        power /= punches.size();
+        speed /= mPunches.size();
+        power /= mPunches.size();
 
-        avgSpeed = speed;
-        avgPower = power;
+        mAvgSpeed = speed;
+        mAvgPower = power;
     }
 
     /**
-     * Calculate how many different types of punches each hand has made
+     * Calculate how many different types of mPunches each hand has made and which type of punch was used the most
      */
     private void calcPunches() {
-        for (int i = 0; i < punches.size(); i++) {
-            switch (punches.get(i).getType()) {
+        for (int i = 0; i < mPunches.size(); i++) {
+            switch (mPunches.get(i).getType()) {
                 case 0:
-                    leftJab++;
+                    mLeftJab++;
                     break;
                 case 1:
-                    leftHook++;
+                    mLeftHook++;
                     break;
                 case 2:
-                    leftUppercut++;
+                    mLeftUppercut++;
                     break;
                 case 3:
-                    rightCross++;
+                    mRightCross++;
                     break;
                 case 4:
-                    rightHook++;
+                    mRightHook++;
                     break;
                 case 5:
-                    rightUppercut++;
+                    mRightUppercut++;
                     break;
             }
         }
+
+        if (mLeftJab > mTopPunch)
+            mTopPunch = mLeftJab;
+        if (mLeftHook > mTopPunch)
+            mTopPunch = mLeftHook;
+        if (mLeftUppercut > mTopPunch)
+            mTopPunch = mLeftUppercut;
+        if (mRightCross > mTopPunch)
+            mTopPunch = mRightCross;
+        if (mRightHook > mTopPunch)
+            mTopPunch = mRightHook;
+        if (mRightUppercut > mTopPunch)
+            mTopPunch = mRightUppercut;
     }
 
     public void addPunch(Punch punch) {
-        punches.add(punch);
+        mPunches.add(punch);
     }
 
     public Punch getPunch(int index) {
-        return punches.get(index);
+        return mPunches.get(index);
     }
 
-    public List<Punch> getPunches() {
-        return punches;
+    public List<Punch> getmPunches() {
+        return mPunches;
     }
 
-    public void setPunches(List<Punch> punches) {
-        this.punches = punches;
+    public void setmPunches(List<Punch> mPunches) {
+        this.mPunches = mPunches;
     }
 
-    public List<Integer> getPunchesPercent() {
-        return punchesPercent;
+    public List<Integer> getmPunchesPercent() {
+        return mPunchesPercent;
     }
 
-    public void setPunchesPercent(List<Integer> punchesPercent) {
-        this.punchesPercent = punchesPercent;
+    public void setmPunchesPercent(List<Integer> mPunchesPercent) {
+        this.mPunchesPercent = mPunchesPercent;
     }
 
-    public int getLeftJab() {
-        return leftJab;
+    public int getmLeftJab() {
+        return mLeftJab;
     }
 
-    public void setLeftJab(int leftJab) {
-        this.leftJab = leftJab;
+    public void setmLeftJab(int mLeftJab) {
+        this.mLeftJab = mLeftJab;
     }
 
-    public int getLeftHook() {
-        return leftHook;
+    public int getmLeftHook() {
+        return mLeftHook;
     }
 
-    public void setLeftHook(int leftHook) {
-        this.leftHook = leftHook;
+    public void setmLeftHook(int mLeftHook) {
+        this.mLeftHook = mLeftHook;
     }
 
-    public int getLeftUppercut() {
-        return leftUppercut;
+    public int getmLeftUppercut() {
+        return mLeftUppercut;
     }
 
-    public void setLeftUppercut(int leftUppercut) {
-        this.leftUppercut = leftUppercut;
+    public void setmLeftUppercut(int mLeftUppercut) {
+        this.mLeftUppercut = mLeftUppercut;
     }
 
-    public int getRightCross() {
-        return rightCross;
+    public int getmRightCross() {
+        return mRightCross;
     }
 
-    public void setRightCross(int rightCross) {
-        this.rightCross = rightCross;
+    public void setmRightCross(int mRightCross) {
+        this.mRightCross = mRightCross;
     }
 
-    public int getRightHook() {
-        return rightHook;
+    public int getmRightHook() {
+        return mRightHook;
     }
 
-    public void setRightHook(int rightHook) {
-        this.rightHook = rightHook;
+    public void setmRightHook(int mRightHook) {
+        this.mRightHook = mRightHook;
     }
 
-    public int getRightUppercut() {
-        return rightUppercut;
+    public int getmRightUppercut() {
+        return mRightUppercut;
     }
 
-    public void setRightUppercut(int rightUppercut) {
-        this.rightUppercut = rightUppercut;
+    public void setmRightUppercut(int mRightUppercut) {
+        this.mRightUppercut = mRightUppercut;
     }
 
-    public double getAvgSpeed() {
-        return avgSpeed;
+    public double getmAvgSpeed() {
+        return mAvgSpeed;
     }
 
-    public void setAvgSpeed(double avgSpeed) {
-        this.avgSpeed = avgSpeed;
+    public void setmAvgSpeed(double mAvgSpeed) {
+        this.mAvgSpeed = mAvgSpeed;
     }
 
-    public double getAvgPower() {
-        return avgPower;
+    public double getmAvgPower() {
+        return mAvgPower;
     }
 
-    public void setAvgPower(double avgPower) {
-        this.avgPower = avgPower;
+    public void setmAvgPower(double mAvgPower) {
+        this.mAvgPower = mAvgPower;
+    }
+
+    public int getmTopPunch() {
+        return mTopPunch;
+    }
+
+    public void setmTopPunch(int mTopPunch) {
+        this.mTopPunch = mTopPunch;
+    }
+
+    public double getmInterval() {
+        return mInterval;
+    }
+
+    public void setmInterval(double mInterval) {
+        this.mInterval = mInterval;
     }
 }
